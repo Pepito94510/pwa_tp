@@ -1,5 +1,7 @@
 # pwa_tp
 
+##  ! Le TP PWA se trouve dans le répertoir "react-pwa" ! 
+
 Pour faire fonctionner l'application pwa :
  - npm run build
  - serve -s build 
