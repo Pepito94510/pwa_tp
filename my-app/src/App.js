@@ -4,8 +4,18 @@ import { Route, Routes } from 'react-router';
 import Home from './pages/Home';
 import Blog1 from './pages/Blog1';
 import Blog2 from './pages/Blog2';
+import { useEffect } from 'react';
+
+
 
 function App() {
+
+  // useEffect(
+  //   async () => {
+  //     await fetch('https://jsonplaceholder.typicode.com/users')
+  //   }
+  // )
+  
   return (
     <>
       <div className='App'>
@@ -22,3 +32,5 @@ function App() {
 }
 
 export default App;
+
+

@@ -8,7 +8,6 @@
 // service worker, and the Workbox build step will be skipped.
 
 import { clientsClaim } from 'workbox-core';
-import { assert } from 'workbox-core/_private';
 import { ExpirationPlugin } from 'workbox-expiration';
 import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
@@ -71,39 +70,41 @@ self.addEventListener('message', (event) => {
 });
 
 // Any other custom service worker logic can go here.
-const staticDevCache = "cache-pwa";
 
-self.addEventListener('install', (event) => {
+const CACHE_NAME = 'pwa-app-cache-v2';
+
+self.addEventListener("install", (event) => {
   event.waitUntil(
-    (async () => {
-      const cache = await caches.open(staticDevCache);
-      cache.addAll(['/']);
-      cache.add('offline.html');
-    })()
+    caches
+      .open(CACHE_NAME)
+      .then((cache) =>
+        cache.addAll([
+          "/",
+          "/index.js",
+          "/style.css",
+          "/app.js",
+          "/pages/Home.js",
+          "/pages/Blog1.js",
+          "/pages/Blog2.js",
+          "/index.html",
+          "/logo192.png",
+          "/logo512.png",
+          "/manifest.json",
+          "/favicon.ico",
+        ])
+      )
   );
 });
 
-self.addEventListener('fetch', (event) => {
+self.addEventListener("fetch", (event) => {
+  console.log(`fetch: ${event.request}, mode: ${event.request.mode}`)
+  console.log(`requete url:  ${event.request.url}`);
   event.respondWith(
-    (async () => {
-      const cache = await caches.open(staticDevCache);
-
-      try {
-        const fetchResponse = await fetch(event.request);
-
-        cache.add(event.request, fetchResponse.clone());
-        console.log("fetchResponse" + fetchResponse);
-        return fetchResponse;
-      } catch (e) {
-        const cachedResponse = await cache.match(event.request);
-        console.log("cachedResponse" + cachedResponse);
-        //const cachedResponse = await cache.match('offline.html');
-
-        return cachedResponse;
+    caches.match(event.request).then((response) => {
+      if (response) {
+        console.log("Dans le cache:", response);
+        return response;
       }
-    })()
+    })
   );
 });
-
-
-//https://pwa-workshop.js.org/fr/
